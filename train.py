@@ -19,7 +19,6 @@ config=dict(
 
   batch_size = 60,
   temperature = 0.5,
-
   hidden_size = 100,
   n_layers = 2,
   rnn_cell = 'lstm',
@@ -51,6 +50,7 @@ def train(logdir, model_name, iterations, checkpoint_interval, batch_size, tempe
     summary(model)
 
     loop = tqdm(range(0, iterations + 1), desc='Training', unit='Steps')
+
     for i, batch in zip(loop, cycle(loader)):
         scheduler.step()
         optimizer.zero_grad()
@@ -62,7 +62,7 @@ def train(logdir, model_name, iterations, checkpoint_interval, batch_size, tempe
         h_0 = h_0.to(device)
 
         # TODO: Fill in below
-        init_hidden = None
+        init_hidden = (h_0,c_0)
 
         hidden = init_hidden
         loss = 0.0
@@ -71,12 +71,12 @@ def train(logdir, model_name, iterations, checkpoint_interval, batch_size, tempe
           # TODO: Fill in below
           # run a step of training model.
           # x = semgent of batch, corresponds to current step. shape of (batch_size, 1)
-          pred, hidden = model(x=None, hidden=hidden)
+          pred, hidden = model(x= batch[:,step],hidden=hidden)
 
           # TODO: Fill in below
           # calcuate loss between prediction and the values of next step.
           # Hint: use criterion. See torch.nn.NLLLoss() function
-          loss += None
+          loss += criterion(pred, batch[:,step+1])
 
         loss.backward()
         optimizer.step()

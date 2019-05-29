@@ -8,19 +8,19 @@ class Baseline(nn.Module):
     super(Baseline, self).__init__()
     self.hidden_size = hidden_size
     self.n_layers = n_layers
-    self.encoder = nn.Embedding(N_DICT+1, N_DICT+1)  # because of start token, we add +1 on N_DICT
+    self.encoder = nn.Embedding(N_DICT+1, hidden_size)  # because of start token, we add +1 on N_DICT
 
     # TODO: Fill in below
     # Hint: define nn.LSTM / nn.GRU units, with hidden_size and n_layers.
     if rnn_cell == 'lstm':
-      self.rnn = None
+      self.rnn = nn.LSTM(input_size= hidden_size, hidden_size=hidden_size, num_layers=n_layers)
     elif rnn_cell == 'gru':
-      self.rnn = None
+      self.rnn = nn.GRU(input_size= hidden_size, hidden_size=hidden_size, num_layers= n_layers)
 
     # TODO: Fill in below
     # input of decoder should be output of rnn,
     # output of decoder should be number of classes
-    self.decoder = nn.Linear(in_features=None, out_features=None)
+    self.decoder = nn.Linear(in_features= hidden_size, out_features= N_DICT+1)
     self.log_softmax = nn.LogSoftmax(dim=-1)
 
   def forward(self, x, hidden, temperature=1.0):
@@ -30,13 +30,13 @@ class Baseline(nn.Module):
 
     # TODO: Fill in below
     # hint: use self.rnn you made. encoded input and hidden should be fed.
-    output, hidden = None
+    output, hidden = self.rnn(encoded, hidden)
     output = output.squeeze(0)
 
     # TODO: Fill in below
     # connect output of rnn to decoder.
     # hint: use self.decoder
-    output = None
+    output = self.decoder(output)
 
     # Optional: apply temperature
     # https://cs.stackexchange.com/questions/79241/what-is-temperature-in-lstm-and-neural-networks-generally

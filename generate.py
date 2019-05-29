@@ -34,11 +34,11 @@ def generate_sequence(model, sequence_length):
     output = init_output
     # TODO: Fill in below
     # make empty list where output will be gathered
-    outputs = None
+    outputs = []
 
     for step in range(sequence_length - 1):
       # TODO: Fill in below
-      pred, hidden = None
+      pred, hidden = model(x= output,hidden=hidden)
 
       #######################################
       # we changed here to get better output results. (argmax sampling -> random sampling)
@@ -53,7 +53,7 @@ def generate_sequence(model, sequence_length):
 
     # TODO: Fill in below
     # return generated sequence
-    return None
+    return outputs
 
 
 def indices_to_midi(indices, save_path=None, init_tempo=130):
@@ -141,10 +141,10 @@ def indices_to_midi(indices, save_path=None, init_tempo=130):
 
 
 if __name__ == '__main__':
-  model = load_model("runs/improvise_RNN_190515-100339/model-128.pt")
+  model = load_model("runs/improvise_RNN_190529-192449/model-1024.pt")
   seqs = generate_sequence(model, 30)
   print(seqs)
-  indices_to_midi(seqs, save_path='output/my_music.mid', init_tempo=130)
+  indices_to_midi(seqs, save_path='output/my_music1024.mid', init_tempo=130)
 
   # to generate random sequence
   # seq_rand = list(np.random.randint(low=0, high=N_DICT, size=(50)))
